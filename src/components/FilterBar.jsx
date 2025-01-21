@@ -7,7 +7,7 @@ const FilterBar = () => {
     const currentFilter = useSelector(selectCurrentFilter);
     const handleFilter = (filter) => {
         console.log(filter)
-        dispatch(filterTodos({filter: filter}))
+        dispatch(filterTodos({filter}))
     }
     return (
         <div className="flex space-x-4 items-center">
