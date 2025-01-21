@@ -19,8 +19,8 @@ const Todo = () => {
         }
     }
     const handleSearchChange = (value) => {
-        setSearchTerm(value);
-        dispatch(updateSearchTerm({searchTerm: value}))
+            setSearchTerm(value);
+            dispatch(updateSearchTerm({searchTerm: value.trim()}))
     }
     return (
     <div className="max-w-4xl mx-auto sm:mt-8 p-4 bg-gray-100 rounded">
