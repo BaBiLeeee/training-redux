@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAction } from '@reduxjs/toolkit';
 
 const initialState = {
   todos: [],
@@ -45,6 +45,12 @@ const slice = createSlice({
         todo.completed = true;
       });
     },
+    fetchTodosSuccess: (state, action) => {
+        state.todos = action.payload;
+    },
+    fetchTodosFailure: (state) => {
+        state.todos = [];
+    },
   },
 });
 
@@ -56,6 +62,10 @@ export const {
   filterTodos,
   updateSearchTerm,
   markAllCompleted,
+  fetchTodosSuccess,
+  fetchTodosFailure
 } = slice.actions;
+
+export const fetchTodosRequest = createAction("todo/fetchTodosRequest");
 
 export default slice.reducer;
