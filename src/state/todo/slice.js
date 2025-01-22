@@ -11,22 +11,28 @@ const slice = createSlice({
   initialState,
   reducers: {
     addTodo: (state, action) => {
-      state.todos.push({ text: action.payload.text, completed: false });
+      state.todos.push({ text: action.payload.text, completed: false, id: Date.now() });
     },
 
     toggleTodo: (state, action) => {
-      const todo = state.todos[action.payload.index];
-      if (todo) {
-        todo.completed = !todo.completed;
-      }
-    },
+        const todo = state.todos.find((t) => t.id === action.payload.id);
+        if (todo) {
+            todo.completed = !todo.completed;
+        }
+    },    
 
     removeTodo: (state, action) => {
-      state.todos.splice(action.payload.index, 1);
+        state.todos = state.todos.filter((todo) => todo.id !== action.payload.id);
+    },
+    
+    updateTodo: (state, action) => {
+        const todo = state.todos.find((t) =>  t.id === action.payload.id);
+        if (todo) {
+            todo.text = action.payload.text
+        }
     },
 
     filterTodos: (state, action) => {
-        console.log("aaa|", action.payload.filter)
       state.filter = action.payload.filter;
     },
 
@@ -46,6 +52,7 @@ export const {
   addTodo,
   toggleTodo,
   removeTodo,
+  updateTodo,
   filterTodos,
   updateSearchTerm,
   markAllCompleted,
