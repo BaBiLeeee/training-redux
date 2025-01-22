@@ -1,7 +1,7 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { BsPlus } from "react-icons/bs";
 import { useDispatch } from "react-redux";
-import { addTodo, updateSearchTerm } from "../state/todo/slice";
+import { addTodo, fetchTodosRequest, updateSearchTerm } from "../state/todo/slice";
 import FilterBar from "./FilterBar";
 import TodoList from "./TodoList";
 import { debounce } from "lodash";
@@ -10,6 +10,10 @@ const Todo = () => {
     const dispatch = useDispatch()
     const [searchTerm, setSearchTerm] = useState();
     const [newTodoText, setNewTodoText] = useState("");
+
+    useEffect(() => {
+        dispatch(fetchTodosRequest());
+      }, []);
 
     const handleAddToDo = () => {
         if(newTodoText.trim() !== "") {
