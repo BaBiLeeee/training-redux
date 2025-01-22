@@ -6,7 +6,6 @@ const FilterBar = () => {
     const dispatch = useDispatch()
     const currentFilter = useSelector(selectCurrentFilter);
     const handleFilter = (filter) => {
-        console.log(filter)
         dispatch(filterTodos({filter}))
     }
     return (
