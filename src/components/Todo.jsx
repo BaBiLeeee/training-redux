@@ -1,80 +1,126 @@
 import { useCallback, useEffect, useState } from "react";
 import { BsPlus } from "react-icons/bs";
-import { useDispatch } from "react-redux";
-import { addTodo, fetchTodosRequest, updateSearchTerm } from "../state/todo/slice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+    addTodo,
+    fetchTodosRequest,
+    updateSearchTerm,
+    updateTodoStatus,
+} from "../state/todo/slice";
 import FilterBar from "./FilterBar";
 import TodoList from "./TodoList";
 import { debounce } from "lodash";
+import { Switch } from "@mui/material";
+import TimerDisplay from "./Timer";
+import { selectTodoStatus } from "../state/todo/selector";
+import { toggleTimerActiveState } from "../state/timer/slice";
 
 const Todo = () => {
-    const dispatch = useDispatch()
+    const todoStatus = {
+        Idle: "idle",
+        Running: "running",
+    }
+    const dispatch = useDispatch();
     const [searchTerm, setSearchTerm] = useState();
     const [newTodoText, setNewTodoText] = useState("");
+    const [isSwitchOn, setIsSwitchOn] = useState(false);
+    const todoCurrentStatus = useSelector(selectTodoStatus)
 
     useEffect(() => {
         dispatch(fetchTodosRequest());
-      }, []);
+    }, []);
 
     const handleAddToDo = () => {
-        if(newTodoText.trim() !== "") {
-            dispatch(addTodo({text: newTodoText.trim()}))
-            setNewTodoText("")
+        if (newTodoText.trim() !== "") {
+            dispatch(addTodo({ text: newTodoText.trim() }));
+            setNewTodoText("");
         }
-    }
-    const debouncedDispatch = useCallback(
+    };
+
+    const debouncedSearch = useCallback(
         debounce((value) => {
             dispatch(updateSearchTerm({ searchTerm: value.trim() }));
-        }, 1000),
+        }, 500),
         [dispatch]
     );
 
     const handleSearchChange = (value) => {
         setSearchTerm(value);
-        debouncedDispatch(value);
+        debouncedSearch(value);
     };
 
-    const handleKeyDown = (e) => {
+    const handleKeyUp = (e) => {
         if (e.key === "Enter") {
             handleAddToDo();
         }
     };
-    return (
-    <div className="max-w-4xl mx-auto sm:mt-8 p-4 bg-gray-100 rounded">
-      <h2 className="mt-3 mb-6 text-2xl font-bold text-center uppercase">
-        Personal TODO APP
-      </h2>
-      <div className="flex items-center mb-4">
-        <input
-          id="addTodoInput"
-          className="flex-grow p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500"
-          type="text"
-          placeholder="Add Todo"
-          value={newTodoText}
-          onChange={(e) => setNewTodoText(e.target.value)}
-          onKeyDown={handleKeyDown}
-        />
-        <button className="ml-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
-            onClick={handleAddToDo}
-        >
-          <BsPlus size={20} />
-        </button>
-      </div>
 
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-        <FilterBar/>
-        <div className="flex items-center mb-4">
-          <input
-            className="flex-grow p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500"
-            type="text"
-            placeholder="Search Todos"
-            value={searchTerm}
-            onChange={(e) => handleSearchChange(e.target.value)}
-          />
+    const handleSwitchToggle = (e) => {
+        const isChecked = e.target.checked;
+        setIsSwitchOn(isChecked);
+    
+        const status = isChecked ? todoStatus.Running : todoStatus.Idle;
+    
+        dispatch(toggleTimerActiveState(isChecked));
+        if (todoCurrentStatus !== status) {
+            dispatch(updateTodoStatus(status));
+        }
+    };
+    
+    return (
+        <div className="max-w-4xl mx-auto sm:mt-8 p-4 bg-gray-100 rounded">
+            <h2 className="mt-3 mb-6 text-2xl font-bold text-center uppercase">
+                Personal TODO APP
+            </h2>
+
+            <div className="flex items-center mb-4">
+                <input
+                    id="addTodoInput"
+                    className="flex-grow p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500"
+                    type="text"
+                    placeholder="Add Todo"
+                    value={newTodoText}
+                    onChange={(e) => setNewTodoText(e.target.value)}
+                    onKeyUp={handleKeyUp}
+                />
+                <button
+                    className="ml-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
+                    onClick={handleAddToDo}
+                >
+                    <BsPlus size={20} />
+                </button>
+            </div>
+
+            <div className="flex flex-col sm:flex-row justify-between gap-4">
+                <FilterBar />
+                <div className="flex items-center mb-4">
+                    <input
+                        className="flex-grow p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500"
+                        type="text"
+                        placeholder="Search Todos"
+                        value={searchTerm}
+                        onChange={(e) => handleSearchChange(e.target.value)}
+                    />
+                </div>
+            </div>
+
+            <div className="flex items-center justify-start mb-4">
+                <Switch checked={isSwitchOn} onChange={handleSwitchToggle} />
+                <span className="ml-2 text-gray-700">
+                    {isSwitchOn ? "Enabled" : "Disabled"}
+                </span>
+            </div>
+            {isSwitchOn ?
+                (<>
+                    <div>
+                        <TimerDisplay />
+                    </div>
+                </>)
+                : (
+                    <></>)}
+            <TodoList searchValue={searchTerm} />
         </div>
-      </div>
-      <TodoList searchValue={searchTerm}/>
-    </div>
-  );
+    );
 };
 
 export default Todo;
