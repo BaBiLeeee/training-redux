@@ -11,18 +11,18 @@ const TodoList = ({ searchValue }) => {
 
     const text = searchValue
         ? filteredTodos.length > 0
-        ? `Notes containing "${searchValue}"`
-        : "Oops, cannot find your note"
+            ? `Notes containing "${searchValue}"`
+            : "Oops, cannot find your note"
         : filteredTodos.length > 0
-        ? "All notes..."
-        : "Nothing to show";
+            ? "All notes..."
+            : "Let’s add your note";
 
     return (
         <ul>
-        <li className="my-2 text-sm italic">{text}</li>
-        {filteredTodos.map((todo) => (
-            <TodoItem key={todo.id} todo={todo} />
-        ))}
+            <li className="my-2 text-sm italic">{text}</li>
+            {filteredTodos.map((todo) => (
+                <TodoItem key={todo.id} todo={todo} />
+            ))}
         </ul>
     );
 };
