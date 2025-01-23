@@ -1,16 +1,16 @@
 [
     {
-        "id": "1",
+        "id": 1,
         "text": "Just a note 1",
         "completed": false
     },
     {
-        "id": "2",
+        "id": 2,
         "text": "Just a note 2",
         "completed": false
     },
     {
-        "id": "3",
+        "id": 3,
         "text": "Just a note 3",
         "completed": false
     }
