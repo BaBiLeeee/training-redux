@@ -5,11 +5,11 @@ import Todo from './components/Todo'
 
 function App() {
 
-  return (
-    <Provider store={store}>
-      <Todo/>
-    </Provider>
-  )
+    return (
+        <Provider store={store}>
+            <Todo />
+        </Provider>
+    )
 }
 
 export default App
