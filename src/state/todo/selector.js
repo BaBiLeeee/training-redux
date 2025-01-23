@@ -17,3 +17,4 @@ export const selectFilteredTodos = (state) => {
 
 export const selectCurrentFilter = (state) => state.todos.filter;
 
+export const selectTodoStatus = (state) => state.todos.status
