@@ -21,7 +21,6 @@ function* fetchTodos() {
         yield put(fetchTodosSuccess(todos));
     } catch (error) {
         yield put(fetchTodosFailure(error.message));
-        console.error(error);
     }
 }
 

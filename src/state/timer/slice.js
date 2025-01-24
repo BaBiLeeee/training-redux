@@ -26,7 +26,6 @@ export const timerSlice = createSlice({
         },
         decrementTimer: (state) => {
             state.time -= 1;
-            console.log(state.time);
         },
         timerTimesup: (state) => {
             state.status = timerStatus.TimesUp;
