@@ -13,27 +13,54 @@ import { debounce } from "lodash";
 import { Switch } from "@mui/material";
 import TimerDisplay from "./Timer";
 import { selectTodoStatus } from "../state/todo/selector";
-import { toggleTimerActiveState } from "../state/timer/slice";
+import { resetTimer, toggleTimerActiveState } from "../state/timer/slice";
+import { selectTimerActiveState, selectTimerStatus } from "../state/timer/selector";
 
 const Todo = () => {
     const todoStatus = {
         Idle: "idle",
         Running: "running",
-    }
+    };
     const dispatch = useDispatch();
-    const [searchTerm, setSearchTerm] = useState();
     const [newTodoText, setNewTodoText] = useState("");
-    const [isSwitchOn, setIsSwitchOn] = useState(false);
-    const todoCurrentStatus = useSelector(selectTodoStatus)
-
+    const [searchTerm, setSearchTerm] = useState("");
+    const timerCurrentStatus = useSelector(selectTimerStatus)
+    const todoCurrentStatus = useSelector(selectTodoStatus);
+    const isActive = useSelector(selectTimerActiveState)
     useEffect(() => {
         dispatch(fetchTodosRequest());
-    }, []);
+    }, [dispatch]);
+    useEffect(() => {
+        if (timerCurrentStatus === "timesup") {
+          setNewTodoText("")
+          dispatch(resetTimer())
+          dispatch(updateTodoStatus(todoStatus.Idle))
+        }
+      }, [timerCurrentStatus]);
 
     const handleAddToDo = () => {
-        if (newTodoText.trim() !== "") {
+        if (newTodoText.trim()) {
             dispatch(addTodo({ text: newTodoText.trim() }));
             setNewTodoText("");
+            dispatch(updateTodoStatus(todoStatus.Idle));
+        }
+    };
+
+    const handleAddToDoChange = (value) => {
+        setNewTodoText(value);
+
+        if (isActive && value.trim() != "") {
+            if (todoCurrentStatus !== todoStatus.Running) {
+                dispatch(updateTodoStatus(todoStatus.Running));
+            }
+        } else {
+            dispatch(updateTodoStatus(todoStatus.Idle));
+        }
+    };
+
+    const handleKeyUp = (e) => {
+        if (e.key === "Enter") {
+            handleAddToDo();
         }
     };
 
@@ -49,24 +76,14 @@ const Todo = () => {
         debouncedSearch(value);
     };
 
-    const handleKeyUp = (e) => {
-        if (e.key === "Enter") {
-            handleAddToDo();
+    const handleSwitchToggle = (e) => {
+        const isChecked = e.target.checked;
+        dispatch(toggleTimerActiveState(isChecked));
+        if(!isChecked) {
+            dispatch(updateTodoStatus(todoStatus.Idle))
         }
     };
 
-    const handleSwitchToggle = (e) => {
-        const isChecked = e.target.checked;
-        setIsSwitchOn(isChecked);
-    
-        const status = isChecked ? todoStatus.Running : todoStatus.Idle;
-    
-        dispatch(toggleTimerActiveState(isChecked));
-        if (todoCurrentStatus !== status) {
-            dispatch(updateTodoStatus(status));
-        }
-    };
-    
     return (
         <div className="max-w-4xl mx-auto sm:mt-8 p-4 bg-gray-100 rounded">
             <h2 className="mt-3 mb-6 text-2xl font-bold text-center uppercase">
@@ -80,7 +97,7 @@ const Todo = () => {
                     type="text"
                     placeholder="Add Todo"
                     value={newTodoText}
-                    onChange={(e) => setNewTodoText(e.target.value)}
+                    onChange={(e) => handleAddToDoChange(e.target.value)}
                     onKeyUp={handleKeyUp}
                 />
                 <button
@@ -105,19 +122,20 @@ const Todo = () => {
             </div>
 
             <div className="flex items-center justify-start mb-4">
-                <Switch checked={isSwitchOn} onChange={handleSwitchToggle} />
+                <Switch checked={isActive} onChange={handleSwitchToggle} />
                 <span className="ml-2 text-gray-700">
-                    {isSwitchOn ? "Enabled" : "Disabled"}
+                    Timer
                 </span>
             </div>
-            {isSwitchOn ?
-                (<>
+            {isActive ? (
+                <>
                     <div>
                         <TimerDisplay />
                     </div>
-                </>)
-                : (
-                    <></>)}
+                </>
+            ) : (
+                <></>
+            )}
             <TodoList searchValue={searchTerm} />
         </div>
     );

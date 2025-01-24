@@ -1,8 +1,12 @@
-import { FaToggleOff, FaToggleOn, FaTrash } from "react-icons/fa";
-import { useDispatch } from "react-redux";
-import { removeTodo, toggleTodo, updateTodo } from "../state/todo/slice";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { FaTrash } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { removeTodo, toggleTodo, updateTodo, updateTodoStatus } from "../state/todo/slice";
+import { resetTimer } from "../state/timer/slice";
+import { selectTodoStatus } from "../state/todo/selector";
+import { selectTimerActiveState, selectTimerStatus } from "../state/timer/selector";
 import PropTypes from "prop-types";
+import { Switch } from "@mui/material";
 
 export const TodoItem = ({ todo }) => {
     TodoItem.propTypes = {
@@ -12,29 +16,53 @@ export const TodoItem = ({ todo }) => {
             completed: PropTypes.bool.isRequired,
         }).isRequired,
     };
+    const todoStatus = {
+        Idle: "idle",
+        Running: "running",
+    };
+    const isActive = useSelector(selectTimerActiveState)
+    const timerStatus = useSelector(selectTimerStatus)
+    const todoCurrentStatus = useSelector(selectTodoStatus)
     const dispatch = useDispatch();
     const [isEditing, setIsEditing] = useState(false);
     const [newText, setNewText] = useState(todo.text);
+
+    useEffect(() => {
+        if (timerStatus === "timesup") {
+            setNewText(todo.text);
+            dispatch(resetTimer());
+            dispatch(updateTodoStatus(todoStatus.Idle));
+        }
+    }, [timerStatus, todo.text, dispatch]);
 
     const handleUpdate = () => {
         if (newText.trim()) {
             dispatch(updateTodo({ id: todo.id, text: newText.trim() }));
             setIsEditing(false);
+            dispatch(updateTodoStatus(todoStatus.Idle))
         }
     };
 
-    const handleKeyDown = (e) => {
+    const handleKeyUp = (e) => {
         if (e.key === "Enter") {
             handleUpdate();
         } else if (e.key === "Escape") {
             setIsEditing(false);
             setNewText(todo.text);
+            dispatch(updateTodoStatus(todoStatus.Idle))
         }
     };
 
-    const handleChangeNote = (e) => {
-        setNewText(e)
-        console.log("text is changed")
+    const handleChangeNote = (value) => {
+        setNewText(value);
+
+        if (isActive && value.trim()) {
+            if (todoCurrentStatus !== todoStatus.Running) {
+                dispatch(updateTodoStatus(todoStatus.Running));
+            }
+        } else {
+            dispatch(updateTodoStatus(todoStatus.Idle));
+        }
     }
 
     return (
@@ -45,7 +73,7 @@ export const TodoItem = ({ todo }) => {
                         type="text"
                         value={newText}
                         onChange={(e) => handleChangeNote(e.target.value)}
-                        onKeyDown={handleKeyDown}
+                        onKeyUp={handleKeyUp}
                         onBlur={handleUpdate}
                         autoFocus
                     />
@@ -65,7 +93,7 @@ export const TodoItem = ({ todo }) => {
                         dispatch(toggleTodo({ id: todo.id }));
                     }}
                 >
-                    {todo.completed ? <FaToggleOff className="size-5" /> : <FaToggleOn className="size-5" />}
+                    {todo.completed ? <Switch checked={true} /> : <Switch checked={false} />}
                 </button>
                 <button
                     onClick={(e) => {
