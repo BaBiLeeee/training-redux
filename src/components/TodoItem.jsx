@@ -6,7 +6,7 @@ import { resetTimer } from "../state/timer/slice";
 import { selectTodoStatus } from "../state/todo/selector";
 import { selectTimerActiveState, selectTimerStatus } from "../state/timer/selector";
 import PropTypes from "prop-types";
-import { Box, Button, Modal, Switch, Typography } from "@mui/material";
+import { Box, Button, Modal, Switch, TextField, Typography } from "@mui/material";
 import { toast } from "react-toastify";
 
 const modalStyle = {
@@ -84,16 +84,23 @@ export const TodoItem = ({ todo }) => {
         <li className="flex justify-between border-b-2 py-2 gap-4" onClick={() => setIsEditing(true)}>
             <div className="flex items-center" >
                 {isEditing ? (
-                    <input
-                    type="text"
-                    value={newText}
+                //     <input
+                //     type="text"
+                //     value={newText}
+                //     onChange={(e) => handleChangeNote(e.target.value)}
+                //     onKeyUp={handleKeyUp}
+                //     className="w-full h-10 px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-800 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition-all duration-200"
+                //     autoFocus
+                //     placeholder="Please text something..."
+                //   />
+                  <TextField 
+                    hiddenLabel
+                    defaultValue={newText}
+                    size="small"
                     onChange={(e) => handleChangeNote(e.target.value)}
                     onKeyUp={handleKeyUp}
-                    className="w-full h-10 px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-800 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition-all duration-200"
-                    autoFocus
-                    placeholder="Please text something..."
+                    onBlur={handleUpdate}
                   />
-                  
                 ) : (
                     <span
                         className={`${todo.completed ? "line-through text-red-500" : ""}`}
