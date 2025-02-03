@@ -15,7 +15,7 @@ import TimerDisplay from "./Timer";
 import { selectTodoStatus } from "../state/todo/selector";
 import { resetTimer, toggleTimerActiveState } from "../state/timer/slice";
 import { selectTimerActiveState, selectTimerStatus } from "../state/timer/selector";
-
+import { toast } from "react-toastify";
 const Todo = () => {
     const todoStatus = {
         Idle: "idle",
@@ -32,16 +32,18 @@ const Todo = () => {
     }, [dispatch]);
     useEffect(() => {
         if (timerCurrentStatus === "timesup") {
-          setNewTodoText("")
-          dispatch(resetTimer())
-          dispatch(updateTodoStatus(todoStatus.Idle))
+            setNewTodoText("")
+            toast.info("Run out of time, all content has been clear")
+            dispatch(resetTimer())
+            dispatch(updateTodoStatus(todoStatus.Idle))
         }
-      }, [timerCurrentStatus]);
+    }, [timerCurrentStatus]);
 
     const handleAddToDo = () => {
         if (newTodoText.trim()) {
             dispatch(addTodo({ text: newTodoText.trim() }));
             setNewTodoText("");
+            toast.success("Add todo note successfully!")
             dispatch(updateTodoStatus(todoStatus.Idle));
         }
     };
@@ -79,7 +81,7 @@ const Todo = () => {
     const handleSwitchToggle = (e) => {
         const isChecked = e.target.checked;
         dispatch(toggleTimerActiveState(isChecked));
-        if(!isChecked) {
+        if (!isChecked) {
             dispatch(updateTodoStatus(todoStatus.Idle))
         }
     };
