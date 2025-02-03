@@ -33,7 +33,7 @@ const Todo = () => {
     useEffect(() => {
         if (timerCurrentStatus === "timesup") {
             setNewTodoText("")
-            toast.info("Run out of time, all content has been clear")
+            toast.info("Running out of time!!!")
             dispatch(resetTimer())
             dispatch(updateTodoStatus(todoStatus.Idle))
         }
@@ -43,7 +43,7 @@ const Todo = () => {
         if (newTodoText.trim()) {
             dispatch(addTodo({ text: newTodoText.trim() }));
             setNewTodoText("");
-            toast.success("Add todo note successfully!")
+            toast.success("Todo added successfully!")
             dispatch(updateTodoStatus(todoStatus.Idle));
         }
     };
