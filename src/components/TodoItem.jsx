@@ -7,6 +7,7 @@ import { selectTodoStatus } from "../state/todo/selector";
 import { selectTimerActiveState, selectTimerStatus } from "../state/timer/selector";
 import PropTypes from "prop-types";
 import { Switch } from "@mui/material";
+import { toast } from "react-toastify";
 
 export const TodoItem = ({ todo }) => {
     TodoItem.propTypes = {
@@ -39,6 +40,7 @@ export const TodoItem = ({ todo }) => {
         if (newText.trim()) {
             dispatch(updateTodo({ id: todo.id, text: newText.trim() }));
             setIsEditing(false);
+            toast.success("update todo note successfully!")
             dispatch(updateTodoStatus(todoStatus.Idle))
         }
     };
@@ -80,7 +82,7 @@ export const TodoItem = ({ todo }) => {
                 ) : (
                     <span
                         className={`${todo.completed ? "line-through text-red-500" : ""}`}
-                        title="Double click to edit"
+                        title="Click to edit"
                     >
                         {todo.text}
                     </span>
@@ -98,6 +100,7 @@ export const TodoItem = ({ todo }) => {
                 <button
                     onClick={(e) => {
                         e.stopPropagation();
+                        toast.success("Delete todo note successfully!")
                         dispatch(removeTodo({ id: todo.id }))
                     }}
                 >
