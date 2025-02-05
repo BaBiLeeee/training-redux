@@ -19,7 +19,7 @@ const modalStyle = {
     borderRadius: "8px",
     boxShadow: 24,
     p: 4,
-  };
+};
 
 export const TodoItem = ({ todo }) => {
     TodoItem.propTypes = {
@@ -81,26 +81,19 @@ export const TodoItem = ({ todo }) => {
     }
 
     return (
-        <li className="flex justify-between border-b-2 py-2 gap-4" onClick={() => setIsEditing(true)}>
+        <li className="flex justify-between border-b-2" onClick={() => setIsEditing(true)}>
             <div className="flex items-center" >
                 {isEditing ? (
-                //     <input
-                //     type="text"
-                //     value={newText}
-                //     onChange={(e) => handleChangeNote(e.target.value)}
-                //     onKeyUp={handleKeyUp}
-                //     className="w-full h-10 px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-800 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition-all duration-200"
-                //     autoFocus
-                //     placeholder="Please text something..."
-                //   />
-                  <TextField 
-                    hiddenLabel
-                    defaultValue={newText}
-                    size="small"
-                    onChange={(e) => handleChangeNote(e.target.value)}
-                    onKeyUp={handleKeyUp}
-                    onBlur={handleUpdate}
-                  />
+                    <TextField
+                        hiddenLabel
+                        defaultValue={newText}
+                        size="small"
+                        onChange={(e) => handleChangeNote(e.target.value)}
+                        onKeyUp={handleKeyUp}
+                        onBlur={handleUpdate}
+                        fullWidth
+                        style={{ width: "100%" }}
+                    />
                 ) : (
                     <span
                         className={`${todo.completed ? "line-through text-red-500" : ""}`}
@@ -119,7 +112,7 @@ export const TodoItem = ({ todo }) => {
                 >
                     {todo.completed ? <Switch checked={true} /> : <Switch checked={false} />}
                 </button>
-                <Button 
+                <Button
                     onClick={(e) => {
                         e.stopPropagation();
                         handleOpen();
@@ -128,32 +121,32 @@ export const TodoItem = ({ todo }) => {
                     <FaTrash className="text-red-500 size-5" />
                 </Button>
                 <Modal open={open} onClose={() => setOpen(false)}>
-                <Box sx={modalStyle}>
-                    <Typography variant="h6" className="text-center font-semibold">
-                        Confirm delete?
-                    </Typography>
-                    <Typography variant="body1" className="text-center text-gray-600">
-                        Are you sure want to delete?
-                    </Typography>
-                    <div className="flex justify-center gap-4 mt-4">
-                        <Button
-                            variant="contained"
-                            color="error"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                toast.success("Todo deleted successfully!");
-                                dispatch(removeTodo({ id: todo.id }));
-                                setOpen(false);
-                            }}
-                        >
-                            Delete
-                        </Button>
-                        <Button variant="outlined" onClick={() => setOpen(false)}>
-                            Cancel
-                        </Button>
-                    </div>
-                </Box>
-            </Modal>
+                    <Box sx={modalStyle}>
+                        <Typography variant="h6" className="text-center font-semibold">
+                            Confirm delete?
+                        </Typography>
+                        <Typography variant="body1" className="text-center text-gray-600">
+                            Are you sure want to delete?
+                        </Typography>
+                        <div className="flex justify-center gap-4 mt-4">
+                            <Button
+                                variant="contained"
+                                color="error"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    toast.success("Todo deleted successfully!");
+                                    dispatch(removeTodo({ id: todo.id }));
+                                    setOpen(false);
+                                }}
+                            >
+                                Delete
+                            </Button>
+                            <Button variant="outlined" onClick={() => setOpen(false)}>
+                                Cancel
+                            </Button>
+                        </div>
+                    </Box>
+                </Modal>
             </div>
         </li>
     );

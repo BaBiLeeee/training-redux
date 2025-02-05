@@ -50,7 +50,7 @@ const TodoList = ({ searchValue }) => {
                                             {...provided.draggableProps}
                                             {...provided.dragHandleProps}
                                             style={provided.draggableProps.style}
-                                            className="p-4 border rounded-md cursor-pointer bg-white"
+                                            className="p-4 border rounded-md cursor-pointer bg-white mt-2"
                                         >
                                             <TodoItem key={todo.id} todo={todo} />
                                         </div>
