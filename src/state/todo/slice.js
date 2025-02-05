@@ -59,6 +59,9 @@ const slice = createSlice({
         },
         updateTodoStatus: (state, action) => {
             state.status = action.payload;
+        },
+        reorderTodos: (state, action) => {
+            state.todos = action.payload;
         }
     },
 });
@@ -73,7 +76,8 @@ export const {
     markAllCompleted,
     fetchTodosSuccess,
     fetchTodosFailure,
-    updateTodoStatus
+    updateTodoStatus,
+    reorderTodos 
 } = slice.actions;
 
 export const fetchTodosRequest = createAction("todo/fetchTodosRequest");
